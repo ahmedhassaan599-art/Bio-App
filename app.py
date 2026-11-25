@@ -8,7 +8,7 @@ Entrez.email = "your.email@example.com"
 st.title("🧬 Student Bioinformatics Toolkit")
 st.write("Analyze DNA sequences, calculate GC content, align sequences, and search NCBI live!")
 
-# Sidebar navigation (single selectbox to prevent duplicate ID errors)
+# Sidebar navigation
 option = st.sidebar.selectbox("Select Tool", ["Sequence Analyzer", "Sequence Alignment", "NCBI Gene Search"])
 
 if option == "Sequence Analyzer":
