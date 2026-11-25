@@ -6,34 +6,24 @@ from Bio import Align, Entrez, SeqIO
 st.set_page_config(
     page_title="BioInnovate Toolkit",
     page_icon="🧬",
-    layout="centered",
-    initial_sidebar_state="expanded"
+    layout="centered"
 )
 
-# Custom CSS Styling for a "Fancy" Look
+# Clean, theme-friendly CSS styling
 st.markdown("""
     <style>
-    .main {
-        background-color: #f8f9fa;
-    }
     .stButton>button {
         width: 100%;
-        background-color: #4f46e5;
+        background-color: #6366f1;
         color: white;
         font-weight: bold;
         border-radius: 8px;
         padding: 0.5rem;
+        border: none;
     }
     .stButton>button:hover {
-        background-color: #4338ca;
+        background-color: #4f46e5;
         color: white;
-    }
-    .metric-card {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        text-align: center;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -43,10 +33,10 @@ Entrez.email = "your.email@example.com"
 
 # App Header
 st.title("🧬 BioInnovate Toolkit")
-st.markdown("##### *Next-Gen Computational Biology & Genomic Analysis Platform*")
+st.markdown("### *Next-Gen Computational Biology & Genomic Analysis Platform*")
 st.markdown("---")
 
-# Sidebar Navigation with Clean Styling
+# Sidebar Navigation
 st.sidebar.markdown("### 🧭 Navigation")
 option = st.sidebar.radio("Select Tool:", ["🧪 Sequence Analyzer", "🔗 Sequence Alignment", "🔍 Live NCBI Search"])
 
