@@ -1,78 +1,106 @@
 import streamlit as st
 from Bio.Seq import Seq
 from Bio import Align, Entrez, SeqIO
+import matplotlib.pyplot as plt
 
 # Page Configuration
 st.set_page_config(
-    page_title="BioInnovate Toolkit",
+    page_title="BioInnovate Genomix",
     page_icon="🧬",
     layout="centered"
 )
 
-# Clean, theme-friendly CSS styling
+# Custom Styling for modern cards and headers
 st.markdown("""
     <style>
+    .main-header {
+        font-size: 2.5rem;
+        color: #6366f1;
+        font-weight: 700;
+        margin-bottom: 0px;
+    }
+    .sub-header {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
     .stButton>button {
         width: 100%;
-        background-color: #6366f1;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
         color: white;
-        font-weight: bold;
-        border-radius: 8px;
-        padding: 0.5rem;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 0.6rem;
         border: none;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     }
     .stButton>button:hover {
-        background-color: #4f46e5;
+        background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
         color: white;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Always tell NCBI who you are
 Entrez.email = "your.email@example.com"
 
 # App Header
-st.title("🧬 BioInnovate Toolkit")
-st.markdown("### *Next-Gen Computational Biology & Genomic Analysis Platform*")
-st.markdown("---")
+st.markdown('<p class="main-header">🧬 BioInnovate Genomix</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Advanced Computational Biology & Genomic Intelligence Platform</p>', unsafe_allow_html=True)
 
-# Sidebar Navigation
-st.sidebar.markdown("### 🧭 Navigation")
-option = st.sidebar.radio("Select Tool:", ["🧪 Sequence Analyzer", "🔗 Sequence Alignment", "🔍 Live NCBI Search"])
+# Sidebar Navigation with Icons
+st.sidebar.markdown("### 🧭 Control Panel")
+option = st.sidebar.radio("Select Module:", ["🧪 Sequence Analyzer", "🔗 Sequence Alignment", "🔍 Live NCBI Database"])
 
 if option == "🧪 Sequence Analyzer":
-    st.header("DNA Property & Protein Translator")
-    st.write("Analyze nucleotide sequences, compute GC metrics, and translate codons instantly.")
+    st.subheader("🧪 DNA Sequence Property & Translation Engine")
+    st.write("Analyze nucleotide distributions, evaluate GC-content stability, and translate coding frames.")
     
-    dna_input = st.text_area("Enter DNA Sequence:", "ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG", height=100)
+    dna_input = st.text_area("Enter Nucleotide Sequence (DNA):", "ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG", height=120)
     
-    if st.button("Run Bio-Analysis"):
+    if st.button("Execute Genomic Analysis"):
         if dna_input:
             clean_seq = Seq(dna_input.strip().upper())
             
-            # Metrics Display
-            col1, col2 = st.columns(2)
+            # Metrics Columns
+            col1, col2, col3 = st.columns(3)
             with col1:
-                st.metric(label="Sequence Length", value=f"{len(clean_seq)} bp")
+                st.metric(label="Length", value=f"{len(clean_seq)} bp")
             with col2:
                 gc_count = clean_seq.count("G") + clean_seq.count("C")
                 gc_pct = (gc_count / len(clean_seq)) * 100
                 st.metric(label="GC Content", value=f"{gc_pct:.1f}%")
+            with col3:
+                st.metric(label="Codon Count", value=f"{len(clean_seq) // 3}")
             
             st.markdown("---")
             
-            # Transcription & Translation tabs
-            tab1, tab2 = st.tabs(["mRNA Transcription", "Protein Translation"])
+            # Visual Base Distribution Chart using Matplotlib
+            st.markdown("#### 📊 Base Composition Distribution")
+            bases = ['Adenine (A)', 'Thymine (T)', 'Guanine (G)', 'Cytosine (C)']
+            counts = [clean_seq.count('A'), clean_seq.count('T'), clean_seq.count('G'), clean_seq.count('C')]
+            colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b']
+            
+            fig, ax = plt.subplots(figsize=(6, 2.5))
+            ax.bar(bases, counts, color=colors, width=0.5)
+            ax.set_ylabel("Frequency", fontsize=9)
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            st.pyplot(fig)
+            
+            st.markdown("---")
+            
+            # Transcription & Translation Tabs
+            tab1, tab2 = st.tabs(["✨ mRNA Transcription", "🧬 Protein Translation"])
             with tab1:
                 st.code(str(clean_seq.transcribe()), language="text")
             with tab2:
                 st.code(str(clean_seq.translate()), language="text")
         else:
-            st.warning("Please enter a valid sequence.")
+            st.warning("Please enter a valid DNA sequence.")
 
 elif option == "🔗 Sequence Alignment":
-    st.header("Pairwise Sequence Aligner")
-    st.write("Compare reference and mutated gene sequences side-by-side.")
+    st.subheader("🔗 Pairwise Global Sequence Aligner")
+    st.write("Perform Needleman-Wunsch global sequence alignment to analyze genetic mutations.")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -80,25 +108,25 @@ elif option == "🔗 Sequence Alignment":
     with col2:
         seq2 = st.text_input("Mutated Sequence", "ATGCGTAGA")
     
-    if st.button("Compute Alignment"):
+    if st.button("Run Global Alignment"):
         aligner = Align.PairwiseAligner()
         aligner.mode = 'global'
         alignments = aligner.align(seq1, seq2)
         
         st.success(f"Optimal Alignment Score: {alignments[0].score}")
-        st.subheader("Visual Mapping Result")
+        st.markdown("#### Alignment Map:")
         st.code(str(alignments[0]), language="text")
 
 elif option == "🔍 Live NCBI Search":
-    st.header("Live GenBank Database Query")
-    st.write("Search live genomic repositories directly from NCBI servers.")
+    st.subheader("🔍 NCBI GenBank Live Query Engine")
+    st.write("Fetch verified genetic records directly from government nucleotide repositories.")
     
-    search_term = st.text_input("Search gene or organism name:", "Insulin")
+    search_term = st.text_input("Query Gene / Organism:", "Insulin")
     
-    if st.button("Query NCBI"):
+    if st.button("Search GenBank Records"):
         if search_term:
             try:
-                with st.spinner("Connecting to NCBI GenBank..."):
+                with st.spinner("Connecting to NCBI servers..."):
                     handle = Entrez.esearch(db="nucleotide", term=search_term, retmax=5)
                     record = Entrez.read(handle)
                     handle.close()
@@ -106,23 +134,22 @@ elif option == "🔍 Live NCBI Search":
                 id_list = record["IdList"]
                 
                 if id_list:
-                    st.success(f"Found {len(id_list)} matching records!")
-                    selected_id = st.selectbox("Select a GenBank Accession ID:", id_list)
+                    st.success(f"Discovered {len(id_list)} matching records!")
+                    selected_id = st.selectbox("Select Accession ID:", id_list)
                     
-                    if st.button("Fetch Record Data"):
-                        with st.spinner("Downloading genetic data..."):
+                    if st.button("Download & Parse Sequence"):
+                        with st.spinner("Retrieving record data..."):
                             fetch_handle = Entrez.efetch(db="nucleotide", id=selected_id, rettype="gb", retmode="text")
                             genbank_record = SeqIO.read(fetch_handle, "genbank")
                             fetch_handle.close()
                         
-                        st.info(f"**Description:** {genbank_record.description}")
-                        st.metric(label="Total Length", value=f"{len(genbank_record.seq)} bp")
-                        st.subheader("Genetic Sequence Preview:")
+                        st.info(f"**Metadata Description:** {genbank_record.description}")
+                        st.metric(label="Total Sequence Length", value=f"{len(genbank_record.seq)} bp")
+                        st.markdown("#### Nucleotide Fastq/Fasta Preview:")
                         st.code(str(genbank_record.seq[:400]) + "...", language="text")
                 else:
-                    st.warning("No records found for that search term. Try another keyword.")
+                    st.warning("No records found. Try a different search keyword.")
             except Exception as e:
-                st.error(f"Error connecting to NCBI: {e}")
+                st.error(f"NCBI connection error: {e}")
         else:
-            st.warning("Please enter a search term.")
-            
+            st.warning("Please enter a search query.")
